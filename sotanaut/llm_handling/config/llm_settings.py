@@ -1,0 +1,1 @@
+SDL_LLAMA_2_13B = {"model_id":"TheBloke/sheep-duck-llama-2-13B-GPTQ", "model_basename": "model"}
