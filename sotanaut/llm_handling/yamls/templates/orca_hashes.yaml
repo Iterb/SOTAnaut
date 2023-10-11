@@ -1,0 +1,8 @@
+template: |
+  ### System:
+  {system_message}
+
+  ### User:
+  {prompt}
+
+  ### Assistant:

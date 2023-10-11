@@ -19,17 +19,20 @@ logging.basicConfig(
 
 
 class ModelWrapper:
-    
-    @staticmethod
-    def load_model(model_id, device_type, model_basename=None):
+
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+
+    @classmethod
+    def load_model(cls, model_id, device_type, model_basename=None):
         logging.info(f"Loading Model: {model_id}, on: {device_type}")
         logging.info("This action can take a few minutes!")
 
-        tokenizer, model = ModelWrapper._load_model_and_tokenizer(
+        tokenizer, model = cls._load_model_and_tokenizer(
             model_id, device_type, model_basename)
-        
-        return ModelWrapper._create_text_generation_pipeline(model_id, tokenizer, model)
-
+        pipeline = cls._create_text_generation_pipeline(model_id, tokenizer, model)
+        return cls(pipeline)
+    
     @staticmethod
     def _load_model_and_tokenizer(model_id, device_type, model_basename):
         if model_basename:
@@ -102,3 +105,6 @@ class ModelWrapper:
         logging.info("Local LLM Loaded")
 
         return local_llm
+    
+    def run_inference(self, full_prompt):
+        return self.pipeline(full_prompt)
