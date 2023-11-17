@@ -43,12 +43,12 @@ class LLMParser:
         if not csv_part and ',' not in output:
             raise ValueError("Output does not contain a CSV format or is not in the expected format.")
 
-        entries = [entry.strip() for entry in csv_part.split(',') if entry.strip()]
-
-        if len(entries) == 0:
+        if entries := [
+            entry.strip() for entry in csv_part.split(',') if entry.strip()
+        ]:
+            return entries[:max_entries]
+        else:
             raise ValueError("No valid entries found in the output.")
-
-        return entries[:max_entries]
     
     @staticmethod
     def parse_enumerated_output(output: str, max_entries: int = 10) -> List[str]:

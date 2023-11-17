@@ -11,8 +11,9 @@ if __name__ == "__main__":
     yaml_manager = YAMLManager()
     arxiv_source = ArxivSource()
     
+    research_topic = "Flower Image Classification"
     prompt = yaml_manager.get(YAMLCategory.PROMPT, "keyword_generation")["default"]
-    prompt = prompt.format(user_input_topic="Flower Image Classification")
+    prompt = prompt.format(user_input_topic=research_topic)
     
     format_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["enumerated_list"]
     output_limit_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["limit_output"]
@@ -21,7 +22,6 @@ if __name__ == "__main__":
     system_message = yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, "keyword_generation")["default"]
     
     template = yaml_manager.get(YAMLCategory.TEMPLATE, "orca_hashes")["template"]
-    
     full_prompt = template.format(system_message=system_message, prompt=full_user_prompt)
     
     print(full_prompt)

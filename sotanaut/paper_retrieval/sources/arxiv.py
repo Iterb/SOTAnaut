@@ -5,9 +5,6 @@ from sotanaut.paper_retrieval.models.paper import Paper
 class ArxivSource:
     BASE_URL = "http://export.arxiv.org/api/query?"
 
-    def __init__(self, max_results=10):
-        self.max_results = max_results
-
     @staticmethod
     def _search_arxiv(query):
         """Interact with the arXiv API and return the content."""
@@ -43,13 +40,16 @@ class ArxivSource:
             'abstract': arxiv_data['summary'],
             'paper_link': arxiv_data['link']
         }
-        
-    def get_papers(self, keywords):
+    
+    @staticmethod
+    def get_papers(keywords, max_results=10):
         """Retrieve and process papers based on given keywords."""
         query_keywords = '+OR+'.join(keywords)  # Joining keywords with OR to expand the search
-        query = f'search_query=all:{query_keywords}&start=0&max_results={self.max_results}'
-        content = self._search_arxiv(query)
-        papers_data = self._parse_feed(content)
-        papers = [Paper(**self._translate_to_paper_format(paper_data)) for paper_data in papers_data]
-        return papers
+        query = f'search_query=all:{query_keywords}&start=0&max_results={max_results}'
+        content = ArxivSource._search_arxiv(query)
+        papers_data = ArxivSource._parse_feed(content)
+        return [
+            Paper(**ArxivSource._translate_to_paper_format(paper_data))
+            for paper_data in papers_data
+        ]
     
