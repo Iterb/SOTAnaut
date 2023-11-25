@@ -3,7 +3,7 @@
 # SOTAnaut
 
 "🚀 SOTAnaut: Your AI Astronaut Exploring the Universe of State-of-the-Art Research 🌌 <br>
- Discover, Analyze, and Navigate the Latest in Scientific Endeavors!"
+Discover, Analyze, and Navigate the Latest in Scientific Endeavors!"
 
 </div>
 

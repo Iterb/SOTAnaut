@@ -3,6 +3,8 @@ import logging
 import torch
 from auto_gptq import AutoGPTQForCausalLM
 from langchain.llms import HuggingFacePipeline
+from sotanaut.llm_handling.models.base_model import BaseModel
+from sotanaut.llm_handling.models.model_factory import ModelFactory
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -18,27 +20,28 @@ logging.basicConfig(
 )
 
 
-class LocalTransformersModel:
-
+@ModelFactory.register("LOCAL_TRANSFORMER")
+class LocalTransformersModel(BaseModel):
     def __init__(self, pipeline, input_template):
         self._pipeline = pipeline
         self._input_template = input_template
 
     @classmethod
-    def load_model(cls, model_id, device_type, input_template, model_basename=None):
+    def load_model(cls, model_id, device_type, input_template, model_basename=None, **kwargs):
         logging.info(f"Loading Model: {model_id}, on: {device_type}")
         logging.info("This action can take a few minutes!")
 
-        tokenizer, model = cls._load_model_and_tokenizer(
-            model_id, device_type, model_basename)
+        tokenizer, model = cls._load_model_and_tokenizer(model_id, device_type, model_basename)
         pipeline = cls._create_text_generation_pipeline(model_id, tokenizer, model)
         return cls(pipeline, input_template)
-    
+
     @staticmethod
     def _load_model_and_tokenizer(model_id, device_type, model_basename):
         if model_basename:
-            return LocalTransformersModel._load_quantized_model_and_tokenizer(model_id, model_basename)
-        elif device_type.lower() == 'cuda':
+            return LocalTransformersModel._load_quantized_model_and_tokenizer(
+                model_id, model_basename
+            )
+        elif device_type.lower() == "cuda":
             return LocalTransformersModel._load_full_model_and_tokenizer(model_id)
         else:
             return LocalTransformersModel._load_llama_model_and_tokenizer(model_id)
@@ -106,7 +109,7 @@ class LocalTransformersModel:
         logging.info("Local LLM Loaded")
 
         return local_llm
-    
+
     def run_inference(self, system_message, prompt):
         full_prompt = self._input_template.format(system_message=system_message, prompt=prompt)
         return self._pipeline(full_prompt)

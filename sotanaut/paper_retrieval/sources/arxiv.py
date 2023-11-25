@@ -1,6 +1,8 @@
-import requests
 import feedparser
+import requests
+
 from sotanaut.paper_retrieval.models.paper import Paper
+
 
 class ArxivSource:
     BASE_URL = "http://export.arxiv.org/api/query?"
@@ -21,35 +23,34 @@ class ArxivSource:
         papers = []
         for entry in feed.entries:
             paper = {
-                'title': entry.title,
-                'authors': [author.name for author in entry.authors],
-                'published': entry.published,
-                'summary': entry.summary,
-                'link': entry.link
+                "title": entry.title,
+                "authors": [author.name for author in entry.authors],
+                "published": entry.published,
+                "summary": entry.summary,
+                "link": entry.link,
             }
             papers.append(paper)
         return papers
-    
+
     @staticmethod
     def _translate_to_paper_format(arxiv_data):
         """Translate arXiv-specific data to standardized Paper format."""
         return {
-            'title': arxiv_data['title'],
-            'authors': arxiv_data['authors'],
-            'date_published': arxiv_data['published'],
-            'abstract': arxiv_data['summary'],
-            'paper_link': arxiv_data['link']
+            "title": arxiv_data["title"],
+            "authors": arxiv_data["authors"],
+            "date_published": arxiv_data["published"],
+            "abstract": arxiv_data["summary"],
+            "paper_link": arxiv_data["link"],
         }
-    
+
     @staticmethod
     def get_papers(keywords, max_results=10):
         """Retrieve and process papers based on given keywords."""
-        query_keywords = '+OR+'.join(keywords)  # Joining keywords with OR to expand the search
-        query = f'search_query=all:{query_keywords}&start=0&max_results={max_results}'
+        query_keywords = "+OR+".join(keywords)  # Joining keywords with OR to expand the search
+        query = f"search_query=all:{query_keywords}&start=0&max_results={max_results}"
         content = ArxivSource._search_arxiv(query)
         papers_data = ArxivSource._parse_feed(content)
         return [
             Paper(**ArxivSource._translate_to_paper_format(paper_data))
             for paper_data in papers_data
         ]
-    

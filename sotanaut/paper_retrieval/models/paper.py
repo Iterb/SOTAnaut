@@ -1,7 +1,8 @@
 from datetime import datetime
 
+
 class Paper:
-    DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'  # ISO format as seen in the sample
+    DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"  # ISO format as seen in the sample
 
     def __init__(self, title, authors, date_published, abstract, paper_link):
         self.title = title
