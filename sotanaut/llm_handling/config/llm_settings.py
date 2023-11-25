@@ -41,7 +41,7 @@ class SDL_LLAMA_2_13B_Config(BaseModelConfig):
 
     @property
     def model_type(self):
-        return "OPEN_AI"
+        return "LOCAL_TRANSFORMER"
     
     @property
     def input_template(self):
@@ -68,7 +68,7 @@ class GPT4_1106_OPEN_AI_Config(BaseModelConfig):
     
     @property
     def model_type(self):
-        return "LOCAL_TRANSFORMER"
+        return "OPEN_AI" 
 
     def get_params(self):
         return {

@@ -12,9 +12,6 @@ if __name__ == "__main__":
     model_settings = GPT4_1106_OPEN_AI_Config().get_params()
     model_type = model_settings["model_type"]
     model = ModelFactory.get_model(model_type, model_settings)
-    
-
-    model = OpenAIModel.load_model(**model_settings, input_template=template)
     arxiv_source = ArxivSource()
 
     research_topic = "Flower Image Classification"

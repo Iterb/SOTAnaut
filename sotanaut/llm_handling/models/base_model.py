@@ -6,7 +6,7 @@ class BaseModel(ABC):
     def run_inference(self, system_message, prompt):
         pass
     
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def load_model(cls, config):
         pass
