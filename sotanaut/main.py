@@ -1,14 +1,18 @@
-from sotanaut.llm_handling.config.llm_settings import SDL_LLAMA_2_13B
-from sotanaut.llm_handling.models.llm_wrapper import ModelWrapper
+from sotanaut.llm_handling.config.llm_settings import SDL_LLAMA_2_13B, GPT4_1106_OPEN_AI
+# from sotanaut.llm_handling.models.local_model_transformers import LocalTransformersModel
+from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
 from sotanaut.llm_handling.utils.llm_parser import LLMParser
 from sotanaut.llm_handling.utils.yaml_manager import YAMLManager, YAMLCategory
 from sotanaut.paper_retrieval.sources.arxiv import ArxivSource
 
 
 if __name__ == "__main__":
-    
-    model = ModelWrapper.load_model(**SDL_LLAMA_2_13B, device_type="cuda")
     yaml_manager = YAMLManager()
+    model_settings = GPT4_1106_OPEN_AI #SDL_LLAMA_2_13B
+    
+    template = yaml_manager.get(YAMLCategory.TEMPLATE, "basic_templates")[model_settings.pop("input_template")]
+    
+    model = OpenAIModel.load_model(**model_settings, input_template=template)
     arxiv_source = ArxivSource()
     
     research_topic = "Flower Image Classification"
@@ -21,11 +25,7 @@ if __name__ == "__main__":
     full_user_prompt = LLMParser.merge_prompts(prompt, format_prompt, output_limit_prompt, separator="")
     system_message = yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, "keyword_generation")["default"]
     
-    template = yaml_manager.get(YAMLCategory.TEMPLATE, "orca_hashes")["template"]
-    full_prompt = template.format(system_message=system_message, prompt=full_user_prompt)
-    
-    print(full_prompt)
-    response = model.run_inference(full_prompt)
+    response = model.run_inference(system_message, full_user_prompt)
     print(response)
     
     keywords = LLMParser.parse_enumerated_output(response)

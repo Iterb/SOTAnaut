@@ -18,29 +18,30 @@ logging.basicConfig(
 )
 
 
-class ModelWrapper:
+class LocalTransformersModel:
 
-    def __init__(self, pipeline):
-        self.pipeline = pipeline
+    def __init__(self, pipeline, input_template):
+        self._pipeline = pipeline
+        self._input_template = input_template
 
     @classmethod
-    def load_model(cls, model_id, device_type, model_basename=None):
+    def load_model(cls, model_id, device_type, input_template, model_basename=None):
         logging.info(f"Loading Model: {model_id}, on: {device_type}")
         logging.info("This action can take a few minutes!")
 
         tokenizer, model = cls._load_model_and_tokenizer(
             model_id, device_type, model_basename)
         pipeline = cls._create_text_generation_pipeline(model_id, tokenizer, model)
-        return cls(pipeline)
+        return cls(pipeline, input_template)
     
     @staticmethod
     def _load_model_and_tokenizer(model_id, device_type, model_basename):
         if model_basename:
-            return ModelWrapper._load_quantized_model_and_tokenizer(model_id, model_basename)
+            return LocalTransformersModel._load_quantized_model_and_tokenizer(model_id, model_basename)
         elif device_type.lower() == 'cuda':
-            return ModelWrapper._load_full_model_and_tokenizer(model_id)
+            return LocalTransformersModel._load_full_model_and_tokenizer(model_id)
         else:
-            return ModelWrapper._load_llama_model_and_tokenizer(model_id)
+            return LocalTransformersModel._load_llama_model_and_tokenizer(model_id)
 
     @staticmethod
     def _load_quantized_model_and_tokenizer(model_id, model_basename):
@@ -106,5 +107,6 @@ class ModelWrapper:
 
         return local_llm
     
-    def run_inference(self, full_prompt):
-        return self.pipeline(full_prompt)
+    def run_inference(self, system_message, prompt):
+        full_prompt = self._input_template.format(system_message=system_message, prompt=prompt)
+        return self._pipeline(full_prompt)

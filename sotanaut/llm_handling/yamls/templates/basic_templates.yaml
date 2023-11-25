@@ -1,0 +1,11 @@
+orca_hashes: |
+  ### System:
+  {system_message}
+
+  ### User:
+  {prompt}
+
+  ### Assistant:
+
+open_ai: |
+  [{{"role": "system", "content": "{system_message}"}}, {{"role": "user", "content": "{prompt}"}}]
