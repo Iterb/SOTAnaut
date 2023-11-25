@@ -76,3 +76,24 @@ class GPT4_1106_OPEN_AI_Config(BaseModelConfig):
             "input_template": self.get_template(),
             "model_type": self.model_type,
         }
+        
+class GPT3_TURBO_1106_OPEN_AI_Config(BaseModelConfig):
+
+    @property
+    def model_id(self):
+        return "gpt-3.5-turbo-1106"
+
+    @property
+    def input_template(self):
+        return "open_ai"
+    
+    @property
+    def model_type(self):
+        return "OPEN_AI" 
+
+    def get_params(self):
+        return {
+            "model_id": self.model_id,
+            "input_template": self.get_template(),
+            "model_type": self.model_type,
+        }

@@ -1,4 +1,4 @@
-from sotanaut.llm_handling.config.llm_settings import GPT4_1106_OPEN_AI_Config
+from sotanaut.llm_handling.config.llm_settings import GPT4_1106_OPEN_AI_Config, GPT3_TURBO_1106_OPEN_AI_Config
 from sotanaut.llm_handling.models.model_factory import ModelFactory
 
 # from sotanaut.llm_handling.models.local_model_transformers import LocalTransformersModel
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_type, model_settings)
     arxiv_source = ArxivSource()
 
-    research_topic = "Flower Image Classification"
+    research_topic = "Trying to predict the cows birth time based on the body contractions"
     prompt = yaml_manager.get(YAMLCategory.PROMPT, "keyword_generation")["default"]
     prompt = prompt.format(user_input_topic=research_topic)
 
@@ -35,4 +35,5 @@ if __name__ == "__main__":
     # # keywords = ["precision agriculture", "crop yield prediction", "disease detection in plants", "soil nutrient analysis using ML"]
     # # keywords = ["fraud detection using deep learning", "stock market prediction algorithms", "customer spending pattern analysis", "credit scoring with ML"]
     papers = arxiv_source.get_papers(keywords)
-    print(papers[0])
+    for paper in papers:
+        print(paper)
