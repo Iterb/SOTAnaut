@@ -2,6 +2,7 @@ import json
 import logging
 import os
 
+import json_repair
 from openai import OpenAI
 
 from sotanaut.llm_handling.models.base_model import BaseModel
@@ -32,7 +33,8 @@ class OpenAIModel(BaseModel):
 
     def run_inference(self, system_message, prompt):
         full_prompt = self._input_template.format(system_message=system_message, prompt=prompt)
-        full_prompt = full_prompt.replace("\n", " ")
-        messages = json.loads(full_prompt)
+        # fixed_prompt = print(full_prompt)
+        # full_prompt = full_prompt.replace("\n", " ")
+        messages = json_repair.loads(full_prompt)
         completion = self._client.chat.completions.create(model=self._model_id, messages=messages)
         return completion.choices[0].message.content

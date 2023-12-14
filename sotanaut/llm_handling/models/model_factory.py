@@ -8,6 +8,7 @@ class ModelFactory:
                 raise ValueError(f"Key '{key}' already exists in Model Registry")
             cls.registry[key] = wrapped_class
             return wrapped_class
+
         return inner_wrapper
 
     @classmethod

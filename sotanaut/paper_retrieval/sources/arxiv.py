@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import feedparser
 import requests
 
@@ -38,9 +40,10 @@ class ArxivSource:
         return {
             "title": arxiv_data["title"],
             "authors": arxiv_data["authors"],
-            "date_published": arxiv_data["published"],
+            "date_published": datetime.strptime(arxiv_data["published"], "%Y-%m-%dT%H:%M:%SZ"),
             "abstract": arxiv_data["summary"],
             "paper_link": arxiv_data["link"],
+            "source": "arxiv",
         }
 
     @staticmethod

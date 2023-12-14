@@ -3,8 +3,6 @@ import logging
 import torch
 from auto_gptq import AutoGPTQForCausalLM
 from langchain.llms import HuggingFacePipeline
-from sotanaut.llm_handling.models.base_model import BaseModel
-from sotanaut.llm_handling.models.model_factory import ModelFactory
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -13,6 +11,9 @@ from transformers import (
     LlamaTokenizer,
     pipeline,
 )
+
+from sotanaut.llm_handling.models.base_model import BaseModel
+from sotanaut.llm_handling.models.model_factory import ModelFactory
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(message)s",

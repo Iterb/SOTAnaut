@@ -2,17 +2,19 @@ from datetime import datetime
 
 
 class Paper:
-    DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"  # ISO format as seen in the sample
-
-    def __init__(self, title, authors, date_published, abstract, paper_link):
+    def __init__(self, title, authors, date_published, abstract, paper_link, source):
         self.title = title
         self.authors = authors
-        self.published = datetime.strptime(date_published, self.DATE_FORMAT)
+        self.published = date_published
         self.summary = abstract
         self.link = paper_link
+        self.source = source
 
     def __str__(self):
         return f"Title: {self.title}\nAuthors: {', '.join(self.authors)}\nPublished: {self.published.strftime('%Y-%m-%d')}\nSummary: {self.summary[:100]}...\nLink: {self.link}"
+
+    def short_description(self):
+        return f"Title: {self.title}\n Published: {self.published.strftime('%Y-%m-%d')}\n Summary: {self.summary[:500]}"
 
     def get_age_in_days(self):
         """Returns the age of the paper in days."""
