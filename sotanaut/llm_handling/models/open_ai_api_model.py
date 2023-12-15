@@ -4,9 +4,11 @@ import os
 
 import json_repair
 from openai import OpenAI
-
+from json_repair import repair_json
 from sotanaut.llm_handling.models.base_model import BaseModel
 from sotanaut.llm_handling.models.model_factory import ModelFactory
+from sotanaut.llm_handling.utils.general_utils import validate_and_fix_json
+from sotanaut.paper_retrieval.utils.helpers import fix_json_via_get
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(message)s",
@@ -35,6 +37,13 @@ class OpenAIModel(BaseModel):
         full_prompt = self._input_template.format(system_message=system_message, prompt=prompt)
         # fixed_prompt = print(full_prompt)
         # full_prompt = full_prompt.replace("\n", " ")
-        messages = json_repair.loads(full_prompt)
-        completion = self._client.chat.completions.create(model=self._model_id, messages=messages)
-        return completion.choices[0].message.content
+        # fixed = validate_and_fix_json(full_prompt)
+        # print(fixed)
+        
+        # problematic_part = full_prompt[max(0, 10-10):10+10]
+        good_json_string = repair_json(full_prompt)
+        print("HERHEHREHRHAHSDHASHD")
+        print(fix_json_via_get("{\"Much JSON!\":\"So Wow!\"}"))
+        # messages = json.loads(good_json_string)
+        # completion = self._client.chat.completions.create(model=self._model_id, messages=messages)
+        # return completion.choices[0].message.content

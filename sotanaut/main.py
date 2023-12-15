@@ -9,6 +9,7 @@ from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
 from sotanaut.llm_handling.utils.llm_parser import LLMParser
 from sotanaut.llm_handling.utils.yaml_manager import YAMLCategory, YAMLManager
 from sotanaut.paper_retrieval.sources.arxiv import ArxivSource
+from sotanaut.paper_retrieval.sources.google_scholar import GoogleScholarSource
 from sotanaut.paper_retrieval.sources.pubmed import PubmedSource
 
 if __name__ == "__main__":
@@ -17,7 +18,11 @@ if __name__ == "__main__":
     model_type = model_settings["model_type"]
     model = ModelFactory.get_model(model_type, model_settings)
 
-    sources = [ArxivSource(), PubmedSource()]
+    sources = [
+        ArxivSource(), 
+        PubmedSource(), 
+        GoogleScholarSource()
+    ]
 
     research_topic = "Trying to predict the cows birth time based on the body contractions"
     prompt = yaml_manager.get(YAMLCategory.PROMPT, "keyword_generation")["default"]
@@ -25,13 +30,13 @@ if __name__ == "__main__":
 
     format_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["enumerated_list"]
     output_limit_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["limit_output"]
-    output_limit_prompt = output_limit_prompt.format(limit_value=10)
+    output_limit_prompt = output_limit_prompt.format(limit_value=5)
     full_user_prompt = LLMParser.merge_prompts(
         prompt, format_prompt, output_limit_prompt, separator=""
     )
     system_message = yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, "keyword_generation")["default"]
 
-    response = model.run_inference(system_message, full_user_prompt)
+    # response = model.run_inference(system_message, full_user_prompt)
     # print(response)
 
     # keywords = LLMParser.parse_enumerated_output(response)
@@ -45,15 +50,16 @@ if __name__ == "__main__":
         "Predictive models for calving",
         "Labor contraction monitoring in cows",
         "Machine learning in cow birth prediction",
-        "Pre-calving behavior patterns",
-        "Automated calving detection systems",
-        "Cattle parturition signs",
-        "Real-time monitoring of bovine labor",
-        "Precision livestock farming calving",
+        # "AI/ML solutions",
+        # "Pre-calving behavior patterns",
+        # "Automated calving detection systems",
+        # "Cattle parturition signs",
+        # "Real-time monitoring of bovine labor",
+        # "Precision livestock farming calving",
     ]
     papers = []
     for source in sources:
-        papers.extend(source.get_papers(keywords))
+        papers.extend(source.get_papers(keywords, max_results=5))
     paper_descriptions = [
         f"{(paper_num+1)}. {paper.short_description()}" for paper_num, paper in enumerate(papers)
     ]
@@ -74,4 +80,4 @@ if __name__ == "__main__":
 
     response = model.run_inference(system_message, full_user_prompt)
 
-    print(response)
+    # print(response)

@@ -1,10 +1,8 @@
 csv: |
-  Please format the output as a comma-separated list, with each entry or phrase clearly delineated.
-  Start with the most relevant phrases.
+  Please format the output as a comma-separated list, with each entry clearly delineated.
 punctuation_list: |
-  Please format the output as a punctuation list, with each entry or phrase starting with number.
+  Please format the output as a punctuation list, with each entry  starting with number.
   Start with the most relevant phrases. Do not output anything
 enumerated_list: |
-  Please format the output as a enumerated list, with each entry or phrase starting with number.
-  Start with the most relevant phrases.
-limit_output: Limit the output to a maximum of {limit_value} entries or phrases.
+  Please format the output as a enumerated list, with each entry starting with number.
+limit_output: Limit the output to a maximum of {limit_value} entries.

@@ -11,10 +11,13 @@ class Paper:
         self.source = source
 
     def __str__(self):
-        return f"Title: {self.title}\nAuthors: {', '.join(self.authors)}\nPublished: {self.published.strftime('%Y-%m-%d')}\nSummary: {self.summary[:100]}...\nLink: {self.link}"
+        return f"Title {self.title}\nAuthors- {', '.join(self.authors)}\nPublished- {self.published.strftime('%Y-%m-%d')}\nSummary- {self.summary[:100]}...\nLink- {self.link}"
 
     def short_description(self):
-        return f"Title: {self.title}\n Published: {self.published.strftime('%Y-%m-%d')}\n Summary: {self.summary[:500]}"
+        return f"Title- {self.title}\n Published- {self.published.strftime('%Y-%m-%d')}\n Summary- {self.summary[:500].strip(',').strip(' ')}"
+    
+    def short_description_no_summary(self):
+        return f"Title- {self.title}\n Published- {self.published.strftime('%Y-%m-%d')}\n"
 
     def get_age_in_days(self):
         """Returns the age of the paper in days."""

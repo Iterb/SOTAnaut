@@ -1,4 +1,4 @@
 default: |
   Given the user's input, generate a list of relevant search keywords for scholarly research.
-  The input topic is: {user_input}. List out pertinent search terms that will help in
+  The input topic is -> {user_input}. List out pertinent search terms that will help in
   finding academic papers related to this topic.
