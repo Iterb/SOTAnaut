@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
 from sotanaut.llm_handling.yamls.yaml_manager import YAMLCategory, YAMLManager
@@ -29,8 +31,7 @@ class BaseModelConfig(ABC):
 
     def get_template(self):
         yaml_manager = YAMLManager()
-        template = yaml_manager.get(YAMLCategory.TEMPLATE, "basic_templates")[self.input_template]
-        return template
+        return yaml_manager.get(YAMLCategory.TEMPLATE, "basic_templates")[self.input_template]
 
 
 class SDL_LLAMA_2_13B_Config(BaseModelConfig):

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Literal, Optional
 
 from sotanaut.llm_handling.yamls.yaml_manager import YAMLCategory, YAMLManager
@@ -32,7 +34,7 @@ class PromptBuilder:
         self,
         prompt_type: Literal["keyword_generation", "paper_filtering"],  # TODO make enum
         prompt_variation: str = "default",  # TODO also formalize
-        output_formats: Optional[dict] = None,
+        output_formats: dict | None = None,
         **kwargs,
     ):
         prompt = self.yaml_manager.get(YAMLCategory.PROMPT, prompt_type)[prompt_variation]

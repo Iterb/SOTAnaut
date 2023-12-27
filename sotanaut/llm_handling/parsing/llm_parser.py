@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import re
 from typing import List
 
 
 class LLMParser:
     @staticmethod
-    def parse_csv_output(output: str, max_entries: int = 10) -> List[str]:
+    def parse_csv_output(output: str, max_entries: int = 10) -> list[str]:
         """Parses the LLM output assumed to be in a CSV format. Extracts entries from a CSV list,
         handling both formatted and plain list outputs.
 
@@ -37,7 +39,7 @@ class LLMParser:
             raise ValueError("No valid entries found in the output.")
 
     @staticmethod
-    def parse_enumerated_output(output: str, max_entries: int = 10) -> List[str]:
+    def parse_enumerated_output(output: str, max_entries: int = 10) -> list[str]:
         """Parses the LLM output assumed to be in an enumerated format. Extracts entries from a
         list presented with numbers.
 
@@ -67,7 +69,7 @@ class LLMParser:
         return LLMParser.clean_list(entries)
 
     @staticmethod
-    def clean_list(output: List[str]) -> List[str]:
+    def clean_list(output: list[str]) -> list[str]:
         """Cleans and splits an enumerated output list.
 
         Args:

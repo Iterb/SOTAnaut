@@ -1,9 +1,8 @@
-import json
+from __future__ import annotations
+
 import logging
 import os
 
-import json_repair
-from json_repair import repair_json
 from openai import OpenAI
 
 from sotanaut.llm_handling.models.base_model import BaseModel

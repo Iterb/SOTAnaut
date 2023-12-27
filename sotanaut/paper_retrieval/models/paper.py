@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 
@@ -15,7 +17,7 @@ class Paper:
 
     def short_description(self):
         return f"Title- {self.title}\n Published- {self.published.strftime('%Y-%m-%d')}\n Summary- {self.summary[:500].strip(',').strip(' ')}"
-    
+
     def short_description_no_summary(self):
         return f"Title- {self.title}\n Published- {self.published.strftime('%Y-%m-%d')}\n"
 
