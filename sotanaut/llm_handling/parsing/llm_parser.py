@@ -4,20 +4,6 @@ from typing import List
 
 class LLMParser:
     @staticmethod
-    def merge_prompts(*prompts: str, separator="\n") -> str:
-        """Merges multiple prompt strings into one.
-
-        Args:
-            *prompts: Variable length prompt list.
-            separator (str): The separator to use between prompts.
-
-        Returns:
-            str: A single merged prompt string.
-        """
-        valid_prompts = [prompt for prompt in prompts if prompt]
-        return separator.join(valid_prompts)
-
-    @staticmethod
     def parse_csv_output(output: str, max_entries: int = 10) -> List[str]:
         """Parses the LLM output assumed to be in a CSV format. Extracts entries from a CSV list,
         handling both formatted and plain list outputs.
@@ -74,7 +60,7 @@ class LLMParser:
 
         entries = [match.group(1).strip() for match in matches]
 
-        if len(entries) == 0:
+        if not entries:
             raise ValueError("No valid enumerated entries found in the output.")
 
         entries = entries[:max_entries]
@@ -102,7 +88,4 @@ class LLMParser:
         # Splitting based on the newline character and removing any leading/trailing whitespace
         split_items = [item.strip() for item in enumerated_string.split("\n") if item.strip()]
 
-        # Further cleaning if needed (e.g., removing numbers and periods)
-        cleaned_items = [re.sub(r"^\d+\.\s*", "", item) for item in split_items]
-
-        return cleaned_items
+        return [re.sub(r"^\d+\.\s*", "", item) for item in split_items]

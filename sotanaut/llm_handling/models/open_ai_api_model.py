@@ -3,8 +3,9 @@ import logging
 import os
 
 import json_repair
-from openai import OpenAI
 from json_repair import repair_json
+from openai import OpenAI
+
 from sotanaut.llm_handling.models.base_model import BaseModel
 from sotanaut.llm_handling.models.model_factory import ModelFactory
 from sotanaut.llm_handling.utils.general_utils import validate_and_fix_json
@@ -34,16 +35,23 @@ class OpenAIModel(BaseModel):
         return cls(client, input_template, model_id)
 
     def run_inference(self, system_message, prompt):
-        full_prompt = self._input_template.format(system_message=system_message, prompt=prompt)
+        # full_prompt = self._input_template.format(system_message=system_message, prompt=prompt) # hate this json parsing. I will disconnect it from interface and hardcode it for now.
+
+        full_prompt = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": prompt},
+        ]
         # fixed_prompt = print(full_prompt)
         # full_prompt = full_prompt.replace("\n", " ")
         # fixed = validate_and_fix_json(full_prompt)
         # print(fixed)
-        
+
         # problematic_part = full_prompt[max(0, 10-10):10+10]
-        good_json_string = repair_json(full_prompt)
-        print("HERHEHREHRHAHSDHASHD")
-        print(fix_json_via_get("{\"Much JSON!\":\"So Wow!\"}"))
+        # good_json_string = repair_json(full_prompt)
+        # print("HERHEHREHRHAHSDHASHD")
+        # print(fix_json_via_get("{\"Much JSON!\":\"So Wow!\"}"))
         # messages = json.loads(good_json_string)
-        # completion = self._client.chat.completions.create(model=self._model_id, messages=messages)
-        # return completion.choices[0].message.content
+        completion = self._client.chat.completions.create(
+            model=self._model_id, messages=full_prompt
+        )
+        return completion.choices[0].message.content

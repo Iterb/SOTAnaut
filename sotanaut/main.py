@@ -6,38 +6,29 @@ from sotanaut.llm_handling.models.model_factory import ModelFactory
 
 # from sotanaut.llm_handling.models.local_model_transformers import LocalTransformersModel
 from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
-from sotanaut.llm_handling.utils.llm_parser import LLMParser
-from sotanaut.llm_handling.utils.yaml_manager import YAMLCategory, YAMLManager
+from sotanaut.llm_handling.parsing.prompt_builder import PromptBuilder
 from sotanaut.paper_retrieval.sources.arxiv import ArxivSource
 from sotanaut.paper_retrieval.sources.google_scholar import GoogleScholarSource
 from sotanaut.paper_retrieval.sources.pubmed import PubmedSource
 
 if __name__ == "__main__":
-    yaml_manager = YAMLManager()
     model_settings = GPT4_1106_OPEN_AI_Config().get_params()
     model_type = model_settings["model_type"]
     model = ModelFactory.get_model(model_type, model_settings)
 
-    sources = [
-        ArxivSource(), 
-        PubmedSource(), 
-        GoogleScholarSource()
-    ]
-
+    sources = [ArxivSource(), PubmedSource(), GoogleScholarSource()]
+    prompt_builder = PromptBuilder()
     research_topic = "Trying to predict the cows birth time based on the body contractions"
-    prompt = yaml_manager.get(YAMLCategory.PROMPT, "keyword_generation")["default"]
-    prompt = prompt.format(user_input=research_topic)
 
-    format_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["enumerated_list"]
-    output_limit_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["limit_output"]
-    output_limit_prompt = output_limit_prompt.format(limit_value=5)
-    full_user_prompt = LLMParser.merge_prompts(
-        prompt, format_prompt, output_limit_prompt, separator=""
+    system_message = prompt_builder.get_system_message(prompt_type="keyword_generation")
+    user_prompt = prompt_builder.get_user_prompt(
+        prompt_type="keyword_generation",
+        output_formats={"enumerated_list": None, "limit_output": {"limit_value": 5}},
+        research_topic=research_topic,
     )
-    system_message = yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, "keyword_generation")["default"]
 
-    # response = model.run_inference(system_message, full_user_prompt)
-    # print(response)
+    response = model.run_inference(system_message, user_prompt)
+    print(response)
 
     # keywords = LLMParser.parse_enumerated_output(response)
     # print(keywords)
@@ -64,20 +55,17 @@ if __name__ == "__main__":
         f"{(paper_num+1)}. {paper.short_description()}" for paper_num, paper in enumerate(papers)
     ]
 
-    prompt = yaml_manager.get(YAMLCategory.PROMPT, "paper_filtering")["default"]
-    prompt = prompt.format(research_topic=research_topic, papers="\n".join(paper_descriptions))
-
-    format_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["enumerated_list"]
-    output_limit_prompt = yaml_manager.get(YAMLCategory.UTLS, "output_format")["limit_output"]
-    output_limit_prompt = output_limit_prompt.format(limit_value=10)
-    full_user_prompt = LLMParser.merge_prompts(
-        prompt, format_prompt, output_limit_prompt, separator=""
+    system_message = prompt_builder.get_system_message(prompt_type="paper_filtering")
+    user_prompt = prompt_builder.get_user_prompt(
+        prompt_type="paper_filtering",
+        output_formats={"enumerated_list": None, "limit_output": {"limit_value": 5}},
+        research_topic=research_topic,
+        papers=paper_descriptions,
     )
-    system_message = yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, "paper_filtering")["default"]
 
     print(system_message)
-    print(full_user_prompt)
+    print(user_prompt)
 
-    response = model.run_inference(system_message, full_user_prompt)
+    response = model.run_inference(system_message, user_prompt)
 
-    # print(response)
+    print(response)

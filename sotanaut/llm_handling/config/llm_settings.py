@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sotanaut.llm_handling.utils.yaml_manager import YAMLCategory, YAMLManager
+from sotanaut.llm_handling.yamls.yaml_manager import YAMLCategory, YAMLManager
 
 
 class BaseModelConfig(ABC):

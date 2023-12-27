@@ -41,11 +41,11 @@ class YAMLManager:
 
         try:
             return self.data[category][key]
-        except KeyError:
+        except KeyError as e:
             available_keys = list(self.data[category].keys())
             raise YAMLKeyNotFoundError(
                 f"'{key}' not found in category '{category.value}'. Available keys: {available_keys}"
-            )
+            ) from e
 
     @staticmethod
     def merge_prompts(*prompts: str, separator="\n"):
