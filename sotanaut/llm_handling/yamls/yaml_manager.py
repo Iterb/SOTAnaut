@@ -4,11 +4,11 @@ from pathlib import Path
 import yaml
 
 
-class YAMLCategory(Enum):
+class YAMLCategory(Enum):  # ? Maybe it should be in prompt builder or handled
     PROMPT = "prompts"
     SYSTEM_MESSAGE = "system_messages"
     TEMPLATE = "templates"
-    UTLS = "utils"
+    UTILS = "utils"
 
 
 class YAMLFileNotFoundError(Exception):
@@ -35,7 +35,7 @@ class YAMLManager:
         with yaml_path.open("r") as f:
             self.data[category][key] = yaml.safe_load(f)
 
-    def get(self, category, key):
+    def get(self, category, key):  # ? Keys could be PromptType enums
         if key not in self.data[category]:
             self._load_yaml(category, key)
 

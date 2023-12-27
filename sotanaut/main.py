@@ -6,7 +6,7 @@ from sotanaut.llm_handling.models.model_factory import ModelFactory
 
 # from sotanaut.llm_handling.models.local_model_transformers import LocalTransformersModel
 from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
-from sotanaut.llm_handling.parsing.prompt_builder import PromptBuilder
+from sotanaut.llm_handling.parsing.prompt_builder import PromptBuilder, PromptType
 from sotanaut.paper_retrieval.sources.arxiv import ArxivSource
 from sotanaut.paper_retrieval.sources.google_scholar import GoogleScholarSource
 from sotanaut.paper_retrieval.sources.pubmed import PubmedSource
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     system_message = prompt_builder.get_system_message(prompt_type="keyword_generation")
     user_prompt = prompt_builder.get_user_prompt(
-        prompt_type="keyword_generation",
+        prompt_type=PromptType.KEYWORD_GENERATION,
         output_formats={"enumerated_list": None, "limit_output": {"limit_value": 5}},
         research_topic=research_topic,
     )
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     system_message = prompt_builder.get_system_message(prompt_type="paper_filtering")
     user_prompt = prompt_builder.get_user_prompt(
-        prompt_type="paper_filtering",
+        prompt_type=PromptType.PAPER_FILTERING,
         output_formats={"enumerated_list": None, "limit_output": {"limit_value": 5}},
         research_topic=research_topic,
         papers=paper_descriptions,
