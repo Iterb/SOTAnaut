@@ -6,3 +6,5 @@ punctuation_list: |
 enumerated_list: |
   Please format the output as a enumerated list, with each entry starting with number.
 limit_output: Limit the output to a maximum of {limit_value} entries.
+concise: |
+  Please keep your answers short and concise. Do not output anything other than what is requested.

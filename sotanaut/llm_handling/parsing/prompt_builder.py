@@ -109,7 +109,9 @@ class PromptBuilder:
                 try:
                     util_prompt = self.yaml_manager.get(YAMLCategory.UTILS, "output_format")[
                         output_format
-                    ].format(**additional_kwargs)
+                    ]
+                    if additional_kwargs:
+                        util_prompt = util_prompt.format(**additional_kwargs)
                     output_format_prompts.append(util_prompt)
                 except KeyError as e:
                     raise ValueError(f"Invalid configuration for output format: {e}") from e
