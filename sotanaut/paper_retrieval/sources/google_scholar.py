@@ -17,12 +17,13 @@ class GoogleScholarSource:
     @staticmethod
     def _parse_article(article):
         """Parse article data into a dictionary."""
+        print(article)
         bib = article.get("bib", {})
         title = bib.get("title", "No title available")
         authors = bib.get("author", [])
         published = bib.get("pub_year", "Unknown year")
         summary = bib.get("abstract", "No abstract available")
-        link = article.get("pub_url", "")
+        link = article.get("eprint_url", "")
 
         return {
             "title": title,

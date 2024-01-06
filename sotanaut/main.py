@@ -1,3 +1,14 @@
+# main.py or a separate logging_config.py
+import logging
+
+from elasticsearch_dsl import connections
+
+from sotanaut.db_handling.es_connection import create_connection
+from sotanaut.db_handling.es_indexer import (
+    ResearchPaper,
+    ensure_elasticsearch_initialized,
+    index_paper_to_elasticsearch,
+)
 from sotanaut.llm_handling.config.llm_settings import (
     GPT3_TURBO_1106_OPEN_AI_Config,
     GPT4_1106_OPEN_AI_Config,
@@ -8,16 +19,26 @@ from sotanaut.llm_handling.models.model_factory import ModelFactory
 from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
 from sotanaut.llm_handling.parsing.llm_parser import LLMParser
 from sotanaut.llm_handling.parsing.prompt_builder import PromptBuilder, PromptType
+from sotanaut.paper_retrieval.downloader import PaperDownloader
 from sotanaut.paper_retrieval.sources.arxiv import ArxivSource
 from sotanaut.paper_retrieval.sources.google_scholar import GoogleScholarSource
 from sotanaut.paper_retrieval.sources.pubmed import PubmedSource
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 if __name__ == "__main__":
+    create_connection()
+    ensure_elasticsearch_initialized()
+
     model_settings = GPT4_1106_OPEN_AI_Config().get_params()
     model_type = model_settings["model_type"]
     model = ModelFactory.get_model(model_type, model_settings)
 
-    sources = [ArxivSource(), PubmedSource(), GoogleScholarSource()]
+    sources = [
+        ArxivSource(),
+        # PubmedSource(),
+        # GoogleScholarSource()
+    ]
     prompt_builder = PromptBuilder()
     research_topic = "Trying to predict the cows birth time based on the body contractions"
 
@@ -59,23 +80,33 @@ if __name__ == "__main__":
     papers = []
     for source in sources:
         papers.extend(source.get_papers(keywords, max_results=5))
-    paper_descriptions = [
-        f"{(paper_num+1)}. {paper.short_description()}" for paper_num, paper in enumerate(papers)
-    ]
+    for paper in papers:
+        paper_downloader = PaperDownloader(paper)
+        file_path = paper_downloader.download_paper(folder_path="downloaded/")
+        index_paper_to_elasticsearch(paper, file_path)
 
-    system_message = prompt_builder.get_system_message(prompt_type=PromptType.PAPER_FILTERING)
-    user_prompt = prompt_builder.get_user_prompt(
-        prompt_type=PromptType.PAPER_FILTERING,
-        output_formats={"enumerated_list": None, "concise": None},
-        research_topic=research_topic,
-        papers=paper_descriptions,
-    )
+    # paper_descriptions = [
+    #     f"{(paper_num+1)}. {paper.short_description()}" for paper_num, paper in enumerate(papers)
+    # ]
 
-    print(system_message)
-    print(user_prompt)
+    # system_message = prompt_builder.get_system_message(prompt_type=PromptType.PAPER_FILTERING)
+    # user_prompt = prompt_builder.get_user_prompt(
+    #     prompt_type=PromptType.PAPER_FILTERING,
+    #     output_formats={"enumerated_list": None, "concise": None},
+    #     research_topic=research_topic,
+    #     papers=paper_descriptions,
+    # )
 
-    response = model.run_inference(system_message, user_prompt)
-    filtered_paper_titles = LLMParser.parse_enumerated_output(response)
+    # print(system_message)
+    # print(user_prompt)
 
-    print(response)
-    print(filtered_paper_titles)
+    # response = model.run_inference(system_message, user_prompt)
+    # filtered_paper_titles = LLMParser.parse_enumerated_output(response)
+
+    # print(response)
+    # print(filtered_paper_titles)
+    # choosen_papers = [paper for paper in papers if any(filtered_title in paper.title for filtered_title in filtered_paper_titles)]
+    # print(choosen_papers)
+    # for paper in choosen_papers:
+    #     print(paper.link)
+    #     paper.download_paper("downloaded")

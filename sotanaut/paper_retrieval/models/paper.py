@@ -1,10 +1,10 @@
-from __future__ import annotations
-
+import uuid
 from datetime import datetime
 
 
 class Paper:
     def __init__(self, title, authors, date_published, abstract, paper_link, source):
+        self.id = uuid.uuid4()
         self.title = title
         self.authors = authors
         self.published = date_published
@@ -22,9 +22,7 @@ class Paper:
         return f"Title - {self.title}\n Published - {self.published.strftime('%Y-%m-%d')}\n"
 
     def get_age_in_days(self):
-        """Returns the age of the paper in days."""
         return (datetime.now() - self.published).days
 
     def is_recent(self, threshold=365):
-        """Determines if the paper is 'recent' based on a given threshold in days."""
         return self.get_age_in_days() <= threshold

@@ -40,6 +40,8 @@ class PubmedSource:
         date_published = f"{pub_date.get('Year', '????')}-{pub_date.get('Month', '??')}-{pub_date.get('Day', '??')}"
         abstract = article_data.get("Abstract", {}).get("AbstractText", [""])[0]
         link = f"https://pubmed.ncbi.nlm.nih.gov/{article['MedlineCitation']['PMID']}/"
+        print
+        # link = f"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{article['MedlineCitation']['PMID']}/"
 
         return {
             "title": title,
