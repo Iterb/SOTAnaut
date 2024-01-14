@@ -16,6 +16,7 @@ class PromptType(Enum):
 
     KEYWORD_GENERATION = "keyword_generation"
     PAPER_FILTERING = "paper_filtering"
+    PAPER_SUMMARIZATION = "paper_summarization"
 
 
 class PromptVariation(Enum):

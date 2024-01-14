@@ -20,7 +20,7 @@ class PaperDownloader:
             if download_url := self._get_download_url():
                 file_path = self._download_and_save_pdf(download_url, folder_path)
             else:
-                logging.warning(f"No download URL found for: {self.paper.title}")
+                logging.error(f"No download URL found for: {self.paper.title}")
                 return None
         except requests.RequestException as e:
             logging.error(f"Error downloading the paper '{self.paper.title}': {e}")

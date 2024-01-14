@@ -1,8 +1,8 @@
 default: |
   Given the reseach topic and papers list, filter out papers that
   are not closely related to the given topic or do not involve AI/ML solutions.
-  Then, you must rank the remaining papers based on their relevance to the specified topic (most important)
-  and their recency (less important). This will help users efficiently find the most up-to-date research
+  Then, you must rank the remaining papers based on their relevance to the specified topic.
+  This will help users efficiently find the most up-to-date research
   in their field of interest. Output a bare list of titles without anything exept plain title.
   Reseach topic is - {research_topic}
   List of papers - {papers}

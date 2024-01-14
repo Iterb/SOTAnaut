@@ -1,3 +1,5 @@
+import logging
+
 from elasticsearch_dsl import Date, Document, Text
 
 from sotanaut.db_handling.pdf_extractor import extract_text_from_pdf
@@ -18,11 +20,16 @@ class ResearchPaper(Document):
 
 # Create the index in Elasticsearch if it doesn't exist
 from elasticsearch.exceptions import NotFoundError
+from PyPDF2.errors import PdfReadError
 
 
 def index_paper_to_elasticsearch(paper, file_path):
     # Extract text from the PDF
-    full_text = extract_text_from_pdf(file_path)
+    try:
+        full_text = extract_text_from_pdf(file_path)
+    except PdfReadError:
+        logging.error(f"Error reading pdf: {file_path}")
+        return False
     # Create an instance of the ResearchPaper document
     es_paper = ResearchPaper(
         id=str(paper.id),
@@ -31,8 +38,10 @@ def index_paper_to_elasticsearch(paper, file_path):
         publication_date=paper.published,
         source_url=paper.link,
         full_text=full_text,
+        meta={"id": str(paper.id)},
     )
     es_paper.save()
+    return True
 
 
 def ensure_elasticsearch_initialized():

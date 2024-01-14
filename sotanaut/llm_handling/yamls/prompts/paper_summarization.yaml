@@ -1,0 +1,6 @@
+default: |
+  Please summarize all available academic papers and extract the most
+  significant insights based on the specified research topic" {research_topic}. Your summary should include key findings,
+  major theoretical contributions, and any notable trends or patterns identified in the literature.
+  Additionally, highlight any conflicting viewpoints or gaps in the research that may warrant further investigation.
+  Ensure that the summary is concise, comprehensive, and reflects the current state of knowledge in the field.

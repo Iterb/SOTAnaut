@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import requests
+from fuzzywuzzy import process
 
 
 def fix_json_via_get(json_data):
@@ -17,3 +18,9 @@ def fix_json_via_get(json_data):
         return response.json()  # or response.text if the response is not in JSON format
     print(f"Error: {response.status_code}")
     return None
+
+
+def find_best_match(title, paper_objects):
+    titles = [paper.title for paper in paper_objects]
+    best_match_title = process.extractOne(title, titles)[0]
+    return next((paper for paper in paper_objects if paper.title == best_match_title), None)

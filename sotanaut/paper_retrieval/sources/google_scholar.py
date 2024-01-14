@@ -11,13 +11,11 @@ class GoogleScholarSource:
         """Search for papers on Google Scholar."""
         search_query = scholarly.search_pubs(query)
         articles = [next(search_query) for _ in range(max_results)]
-        print("Sample article data:", articles[0])  # Print the first article's data
         return articles
 
     @staticmethod
     def _parse_article(article):
         """Parse article data into a dictionary."""
-        print(article)
         bib = article.get("bib", {})
         title = bib.get("title", "No title available")
         authors = bib.get("author", [])

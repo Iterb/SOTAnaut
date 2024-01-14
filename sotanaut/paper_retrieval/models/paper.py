@@ -1,10 +1,15 @@
+import hashlib
 import uuid
 from datetime import datetime
 
 
+def generate_hash(title):
+    return hashlib.sha256(title.encode()).hexdigest()
+
+
 class Paper:
     def __init__(self, title, authors, date_published, abstract, paper_link, source):
-        self.id = uuid.uuid4()
+        self.id = generate_hash(title)
         self.title = title
         self.authors = authors
         self.published = date_published

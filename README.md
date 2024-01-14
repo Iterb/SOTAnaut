@@ -11,6 +11,6 @@ Discover, Analyze, and Navigate the Latest in Scientific Endeavors!"
 
 <div align="center">
 
-![](https://github.com/PuchalaS/SOTAnaut/blob/main/images/banner.png)
+![](https://github.com/PuchalaS/SOTAnaut/blob/main/github_images/banner.png)
 
 </div>

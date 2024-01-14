@@ -40,7 +40,6 @@ class PubmedSource:
         date_published = f"{pub_date.get('Year', '????')}-{pub_date.get('Month', '??')}-{pub_date.get('Day', '??')}"
         abstract = article_data.get("Abstract", {}).get("AbstractText", [""])[0]
         link = f"https://pubmed.ncbi.nlm.nih.gov/{article['MedlineCitation']['PMID']}/"
-        print
         # link = f"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{article['MedlineCitation']['PMID']}/"
 
         return {
@@ -85,9 +84,7 @@ class PubmedSource:
     def get_papers(keywords, max_results=10):
         """Retrieve and process papers based on given keywords."""
         query_keywords = " OR ".join(keywords)  # Joining keywords with AND for PubMed search
-        print(query_keywords)
         ids = PubmedSource._search_pubmed(query_keywords, max_results)
-        print(ids)
         articles = PubmedSource._fetch_details(ids)["PubmedArticle"]
         papers_data = [PubmedSource._parse_article(article) for article in articles]
         return [
