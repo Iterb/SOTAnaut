@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from sotanaut.llm_handling.yamls.yaml_manager import YAMLCategory, YAMLManager
+from sotanaut.llm_handling.templates.template_bank import TemplateBank, TemplateCategory
 
 
 class PromptType(Enum):
@@ -38,7 +38,7 @@ class PromptBuilder:
 
     def __init__(self):
         """Initializes the PromptBuilder with a YAMLManager instance."""
-        self.yaml_manager = YAMLManager()
+        self.yaml_manager = TemplateBank()
 
     @staticmethod
     def merge_prompts(*prompts: str, separator: str = "\n") -> str:
@@ -70,7 +70,7 @@ class PromptBuilder:
             ValueError: If the YAML configuration is invalid or missing required keys.
         """
         try:
-            return self.yaml_manager.get(YAMLCategory.SYSTEM_MESSAGE, prompt_type.value)[
+            return self.yaml_manager.get(TemplateCategory.SYSTEM_MESSAGE, prompt_type.value)[
                 prompt_variation.value
             ]
         except KeyError as e:
@@ -98,7 +98,7 @@ class PromptBuilder:
             ValueError: If the YAML configuration is invalid or missing required keys.
         """
         try:
-            prompt = self.yaml_manager.get(YAMLCategory.PROMPT, prompt_type.value)[
+            prompt = self.yaml_manager.get(TemplateCategory.PROMPT, prompt_type.value)[
                 prompt_variation.value
             ].format(**kwargs)
         except KeyError as e:
@@ -108,7 +108,7 @@ class PromptBuilder:
         if output_formats:
             for output_format, additional_kwargs in output_formats.items():
                 try:
-                    util_prompt = self.yaml_manager.get(YAMLCategory.UTILS, "output_format")[
+                    util_prompt = self.yaml_manager.get(TemplateCategory.UTILS, "output_format")[
                         output_format
                     ]
                     if additional_kwargs:

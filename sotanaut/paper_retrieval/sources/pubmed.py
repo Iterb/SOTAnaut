@@ -2,7 +2,7 @@ from datetime import datetime
 
 from Bio import Entrez
 
-from sotanaut.paper_retrieval.models.paper import Paper
+from sotanaut.paper_retrieval.schemas.paper import Paper
 
 
 class PubmedSource:

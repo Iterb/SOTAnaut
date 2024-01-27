@@ -6,7 +6,6 @@ import os
 from openai import OpenAI
 
 from sotanaut.llm_handling.models.base_model import BaseModel
-from sotanaut.llm_handling.models.model_factory import ModelFactory
 from sotanaut.llm_handling.utils.general_utils import validate_and_fix_json
 from sotanaut.paper_retrieval.utils.helpers import fix_json_via_get
 
@@ -16,7 +15,6 @@ logging.basicConfig(
 )
 
 
-@ModelFactory.register("OPEN_AI")
 class OpenAIModel(BaseModel):
     def __init__(self, client, input_template, model_id):
         self._client = client

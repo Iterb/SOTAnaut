@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - ELASTIC_PASSWORD=vSM1agjn5uU8aRTKMS7G
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  sotanaut:
+    image: sotanaut:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - elasticsearch
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ${PWD}:/app
+    entrypoint:
+      [
+        "wait-for-it",
+        "elasticsearch:9200",
+        "--",
+        "python",
+        "-m",
+        "sotanaut.main",
+      ]
+
+volumes:
+  esdata:
+    driver: local

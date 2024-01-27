@@ -30,7 +30,7 @@ class LLMPaperRetriver:
         response = self.model.run_inference(system_message, user_prompt)
         return LLMParser.parse_enumerated_output(response)
 
-    def search_papers(self, keywords, research_topic, filter_and_rank_papers=True):
+    def search_for_papers(self, keywords, research_topic, filter_and_rank_papers=True):
         papers = []
         for source in self.sources:
             papers.extend(source.get_papers(keywords, max_results=5))

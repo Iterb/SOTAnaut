@@ -3,7 +3,7 @@ from datetime import datetime
 import feedparser
 import requests
 
-from sotanaut.paper_retrieval.models.paper import Paper
+from sotanaut.paper_retrieval.schemas.paper import Paper
 
 
 class ArxivSource:

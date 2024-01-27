@@ -1,12 +1,8 @@
-from sotanaut.llm_handling.config.llm_settings import (
-    GPT3_TURBO_1106_OPEN_AI_Config,
-    GPT4_1106_OPEN_AI_Config,
-)
-from sotanaut.llm_handling.models.model_factory import ModelFactory
-from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
+from sotanaut.llm_handling.config.llm_settings import MODELS
 
 
-def get_model():
-    model_settings = GPT3_TURBO_1106_OPEN_AI_Config().get_params()
-    model_type = model_settings["model_type"]
-    return ModelFactory.get_model(model_type, model_settings)
+def get_model(model_name):
+    model_settings = MODELS[model_name]  #! add exist check
+    model_type = model_settings.model_type
+    print(model_settings._asdict())
+    return model_type.load_model(**model_settings._asdict())

@@ -26,7 +26,7 @@ def get_default_keywords():
 def search_and_retrieve_papers(keywords, topic, use_llm):
     model = get_model()
     paper_retriever = LLMPaperRetriver(model)
-    return paper_retriever.search_papers(keywords, topic, filter_and_rank_papers=use_llm)
+    return paper_retriever.search_for_papers(keywords, topic, filter_and_rank_papers=use_llm)
 
 
 def display_papers(papers):

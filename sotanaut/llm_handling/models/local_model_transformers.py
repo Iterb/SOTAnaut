@@ -15,7 +15,6 @@ from transformers import (
 )
 
 from sotanaut.llm_handling.models.base_model import BaseModel
-from sotanaut.llm_handling.models.model_factory import ModelFactory
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(message)s",
@@ -23,8 +22,7 @@ logging.basicConfig(
 )
 
 
-@ModelFactory.register("LOCAL_TRANSFORMER")
-class LocalTransformersModel(BaseModel):
+class LocalTransformerModel(BaseModel):
     def __init__(self, pipeline, input_template):
         self._pipeline = pipeline
         self._input_template = input_template
@@ -41,13 +39,13 @@ class LocalTransformersModel(BaseModel):
     @staticmethod
     def _load_model_and_tokenizer(model_id, device_type, model_basename):
         if model_basename:
-            return LocalTransformersModel._load_quantized_model_and_tokenizer(
+            return LocalTransformerModel._load_quantized_model_and_tokenizer(
                 model_id, model_basename
             )
         elif device_type.lower() == "cuda":
-            return LocalTransformersModel._load_full_model_and_tokenizer(model_id)
+            return LocalTransformerModel._load_full_model_and_tokenizer(model_id)
         else:
-            return LocalTransformersModel._load_llama_model_and_tokenizer(model_id)
+            return LocalTransformerModel._load_llama_model_and_tokenizer(model_id)
 
     @staticmethod
     def _load_quantized_model_and_tokenizer(model_id, model_basename):

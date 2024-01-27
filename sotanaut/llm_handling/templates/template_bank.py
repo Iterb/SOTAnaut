@@ -4,7 +4,7 @@ from pathlib import Path
 import yaml
 
 
-class YAMLCategory(Enum):  # ? Maybe it should be in prompt builder or handled
+class TemplateCategory(Enum):  # ? Maybe it should be in prompt builder or handled
     PROMPT = "prompts"
     SYSTEM_MESSAGE = "system_messages"
     TEMPLATE = "templates"
@@ -19,11 +19,18 @@ class YAMLKeyNotFoundError(Exception):
     pass
 
 
-class YAMLManager:
-    YAML_DIR = Path(__file__).parent.parent / "yamls"
+class TemplateBank:
+    YAML_DIR = Path(__file__).parent.parent / "templates"
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
     def __init__(self):
-        self.data = {category: {} for category in YAMLCategory}
+        self.data = {category: {} for category in TemplateCategory}
 
     def _load_yaml(self, category, key):
         yaml_path = self.YAML_DIR / category.value / f"{key}.yaml"
@@ -47,7 +54,6 @@ class YAMLManager:
                 f"'{key}' not found in category '{category.value}'. Available keys: {available_keys}"
             ) from e
 
-    @staticmethod
-    def merge_prompts(*prompts: str, separator="\n"):
-        valid_prompts = [prompt for prompt in prompts if prompt]
-        return separator.join(valid_prompts)
+
+def get_prompt(category, key):
+    return TemplateBank.get_instance().get(category, key)

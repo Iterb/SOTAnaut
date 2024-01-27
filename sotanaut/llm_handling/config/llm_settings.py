@@ -1,99 +1,36 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import NamedTuple
 
-from sotanaut.llm_handling.yamls.yaml_manager import YAMLCategory, YAMLManager
+from sotanaut.llm_handling.models.base_model import BaseModel
 
+# from sotanaut.llm_handling.models.local_model_transformers import LocalTransformerModel
+from sotanaut.llm_handling.models.open_ai_api_model import OpenAIModel
+from sotanaut.llm_handling.templates.template_bank import TemplateCategory, get_prompt
 
-class BaseModelConfig(ABC):
-    @property
-    @abstractmethod
-    def model_id(self):
-        """Abstract property for model_id."""
-        pass
+# class SDL_LLAMA_2_13B_Config(NamedTuple):
 
-    @property
-    @abstractmethod
-    def model_type(self):
-        """Abstract property for model_id."""
-        pass
-
-    @property
-    @abstractmethod
-    def input_template(self):
-        """Abstract property for input_template."""
-        pass
-
-    @abstractmethod
-    def get_params(self):
-        """Abstract method to get model loading parameters."""
-        pass
-
-    def get_template(self):
-        yaml_manager = YAMLManager()
-        return yaml_manager.get(YAMLCategory.TEMPLATE, "basic_templates")[self.input_template]
+#     model_id = "TheBloke/sheep-duck-llama-2-13B-GPTQ"
+#     model_type = LocalTransformerModel
+#     model_basename = "model"
+#     device_type = "cuda"
+#     input_template = get_prompt(TemplateCategory.TEMPLATE, "basic_templates")["orca_hashes"]
 
 
-class SDL_LLAMA_2_13B_Config(BaseModelConfig):
-    @property
-    def model_id(self):
-        return "TheBloke/sheep-duck-llama-2-13B-GPTQ"
-
-    @property
-    def model_type(self):
-        return "LOCAL_TRANSFORMER"
-
-    @property
-    def input_template(self):
-        return "orca_hashes"
-
-    def get_params(self):
-        return {
-            "model_id": self.model_id,
-            "model_basename": "model",
-            "model_type": self.model_type,
-            "input_template": self.get_template(),
-            "device_type": "cuda",
-        }
+class GPT4_1106_OPEN_AI_Config(NamedTuple):
+    model_id = "gpt-4-1106-preview"
+    model_type = OpenAIModel
+    input_template = get_prompt(TemplateCategory.TEMPLATE, "basic_templates")["open_ai"]
 
 
-class GPT4_1106_OPEN_AI_Config(BaseModelConfig):
-    @property
-    def model_id(self):
-        return "gpt-4-1106-preview"
-
-    @property
-    def input_template(self):
-        return "open_ai"
-
-    @property
-    def model_type(self):
-        return "OPEN_AI"
-
-    def get_params(self):
-        return {
-            "model_id": self.model_id,
-            "input_template": self.get_template(),
-            "model_type": self.model_type,
-        }
+class GPT3_TURBO_1106_OPEN_AI_Config(NamedTuple):
+    model_id: str = "gpt-4-1106-preview"
+    model_type: BaseModel = OpenAIModel
+    input_template: str = get_prompt(TemplateCategory.TEMPLATE, "basic_templates")["open_ai"]
 
 
-class GPT3_TURBO_1106_OPEN_AI_Config(BaseModelConfig):
-    @property
-    def model_id(self):
-        return "gpt-3.5-turbo-1106"
-
-    @property
-    def input_template(self):
-        return "open_ai"
-
-    @property
-    def model_type(self):
-        return "OPEN_AI"
-
-    def get_params(self):
-        return {
-            "model_id": self.model_id,
-            "input_template": self.get_template(),
-            "model_type": self.model_type,
-        }
+MODELS = {
+    # "LLAMA_2_13B": SDL_LLAMA_2_13B_Config(),
+    "GPT4_1106": GPT4_1106_OPEN_AI_Config(),
+    "GPT3_TURBO_1106": GPT3_TURBO_1106_OPEN_AI_Config(),
+}
