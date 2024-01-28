@@ -24,7 +24,13 @@ class GPT4_1106_OPEN_AI_Config(NamedTuple):
 
 
 class GPT3_TURBO_1106_OPEN_AI_Config(NamedTuple):
-    model_id: str = "gpt-4-1106-preview"
+    model_id: str = "gpt-3.5-turbo-1106"
+    model_type: BaseModel = OpenAIModel
+    input_template: str = get_prompt(TemplateCategory.TEMPLATE, "basic_templates")["open_ai"]
+
+
+class GPT3_TURBO_16K_OPEN_AI_Config(NamedTuple):
+    model_id: str = "gpt-3.5-turbo-16k"
     model_type: BaseModel = OpenAIModel
     input_template: str = get_prompt(TemplateCategory.TEMPLATE, "basic_templates")["open_ai"]
 
@@ -33,4 +39,5 @@ MODELS = {
     # "LLAMA_2_13B": SDL_LLAMA_2_13B_Config(),
     "GPT4_1106": GPT4_1106_OPEN_AI_Config(),
     "GPT3_TURBO_1106": GPT3_TURBO_1106_OPEN_AI_Config(),
+    "GPT3_TURBO_16k": GPT3_TURBO_16K_OPEN_AI_Config(),
 }

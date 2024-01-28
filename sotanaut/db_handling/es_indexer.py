@@ -1,13 +1,15 @@
 import logging
 
-from elasticsearch_dsl import Date, Document, Text
+from elasticsearch.exceptions import NotFoundError
+from elasticsearch_dsl import Date, Document, Search, Text
+from PyPDF2.errors import PdfReadError
 
-from sotanaut.db_handling.pdf_extractor import extract_text_from_pdf
+from sotanaut.db_handling.es_connection import ESConnection
+from sotanaut.db_handling.utils import extract_text_from_pdf
 
 
-# Define a document structure for Elasticsearch
 class ResearchPaper(Document):
-    id = Text()  # Add the UUID field
+    id = Text()
     title = Text()
     authors = Text()
     publication_date = Date()
@@ -17,38 +19,57 @@ class ResearchPaper(Document):
     class Index:
         name = "research-papers"
 
+    @classmethod
+    def ensure_index_initialized(cls):
+        try:
+            if not cls._index.exists():
+                cls.init()
+        except NotFoundError:
+            cls.init()
 
-# Create the index in Elasticsearch if it doesn't exist
-from elasticsearch.exceptions import NotFoundError
-from PyPDF2.errors import PdfReadError
+    @classmethod
+    def index_paper(cls, paper, file_path):
+        try:
+            full_text = extract_text_from_pdf(file_path)
+            es_paper = cls(
+                id=str(paper.id),
+                title=paper.title,
+                authors=paper.authors,
+                publication_date=paper.published,
+                source_url=paper.link,
+                full_text=full_text,
+                meta={"id": str(paper.id)},
+            )
+            es_paper.save()
+            return True
+        except PdfReadError:
+            logging.error(f"Error reading pdf: {file_path}")
+            return False
+        except Exception as e:
+            logging.error(f"Error indexing paper: {e}")
+            return False
 
+    @staticmethod
+    def get_document_with_id(doc_id):
+        try:
+            es_connection = ESConnection().get_connection()
+            s = Search(using=es_connection, index=ResearchPaper.Index.name).query(
+                "match", id=str(doc_id)
+            )
+            response = s.execute()
 
-def index_paper_to_elasticsearch(paper, file_path):
-    # Extract text from the PDF
-    try:
-        full_text = extract_text_from_pdf(file_path)
-    except PdfReadError:
-        logging.error(f"Error reading pdf: {file_path}")
-        return False
-    # Create an instance of the ResearchPaper document
-    es_paper = ResearchPaper(
-        id=str(paper.id),
-        title=paper.title,
-        authors=paper.authors,
-        publication_date=paper.published,
-        source_url=paper.link,
-        full_text=full_text,
-        meta={"id": str(paper.id)},
-    )
-    es_paper.save()
-    return True
+            if response.hits.total.value > 1:
+                raise ValueError(f"Found more than one document with the id {doc_id}")
 
+            return None if response.hits.total.value == 0 else response.hits[0]
+        except Exception as e:
+            logging.error(f"Error in getting document with ID {doc_id}: {e}")
+            return None
 
-def ensure_elasticsearch_initialized():
-    try:
-        # Check if index exists and has the correct mappings
-        if not ResearchPaper._index.exists():
-            ResearchPaper.init()
-    except NotFoundError:
-        # Index doesn't exist, so initialize it
-        ResearchPaper.init()
+    @staticmethod
+    def print_all_documents():
+        es_connection = ESConnection().get_connection()
+        s = Search(using=es_connection, index=ResearchPaper.Index.name).source(includes=[])
+        response = s.execute()
+        for num, hit in enumerate(response):
+            print(num, hit.title)

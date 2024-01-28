@@ -1,17 +1,14 @@
 # main.py or a separate logging_config.py
 import logging
+from pathlib import Path
 
 from elasticsearch_dsl import connections
 
 from sotanaut.app.components.app_utils import generate_insights
 from sotanaut.app.components.llm_loader import get_model
 from sotanaut.app.components.llm_paper_retriever import LLMPaperRetriver
-from sotanaut.db_handling.es_connection import create_connection
-from sotanaut.db_handling.es_indexer import (
-    ResearchPaper,
-    ensure_elasticsearch_initialized,
-    index_paper_to_elasticsearch,
-)
+from sotanaut.db_handling.es_connection import ESConnection
+from sotanaut.db_handling.es_indexer import ResearchPaper
 from sotanaut.llm_handling.config.llm_settings import (
     GPT3_TURBO_1106_OPEN_AI_Config,
     GPT4_1106_OPEN_AI_Config,
@@ -28,9 +25,7 @@ from sotanaut.paper_retrieval.utils.helpers import find_best_match
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 if __name__ == "__main__":
-    create_connection()
-    ensure_elasticsearch_initialized()
-
+    es_connection = ESConnection()
     model = get_model("GPT3_TURBO_1106")
     paper_retriever = LLMPaperRetriver(model)
 
@@ -41,24 +36,41 @@ if __name__ == "__main__":
     ]
     research_topic = "Trying to predict the cows birth time based on the body contractions"
 
-    keywords = paper_retriever.get_keywords(research_topic)
-    print(keywords)
-    # keywords = [
-    #     "Cow parturition prediction",
-    #     "Bovine birth timing contractions",
-    #     "Predictive models for calving",
-    #     "Labor contraction monitoring in cows",
-    #     "Machine learning in cow birth prediction",
-    #     # "AI/ML solutions",
-    #     # "Pre-calving behavior patterns",
-    #     # "Automated calving detection systems",
-    #     # "Cattle parturition signs",
-    #     # "Real-time monitoring of bovine labor",
-    #     # "Precision livestock farming calving",
-    # ]
+    # keywords = paper_retriever.get_keywords(research_topic)
+    # print(keywords)
+    keywords = [
+        "Cow parturition prediction",
+        "Bovine birth timing contractions",
+        "Predictive models for calving",
+        "Labor contraction monitoring in cows",
+        "Machine learning in cow birth prediction",
+        # "AI/ML solutions",
+        # "Pre-calving behavior patterns",
+        # "Automated calving detection systems",
+        # "Cattle parturition signs",
+        # "Real-time monitoring of bovine labor",
+        # "Precision livestock farming calving",
+    ]
     papers = paper_retriever.search_for_papers(keywords, research_topic)
+    FOLDER_TO_DOWNLOAD = Path("downloaded")
+    # INDEX = "research-papers"
     for paper in papers:
-        print(paper.title)
+        paper_pdf_path = FOLDER_TO_DOWNLOAD / f"{paper.id}.pdf"
+
+        if not paper_pdf_path.exists():
+            if download_path := PaperDownloader(paper).download_paper(
+                folder_path=FOLDER_TO_DOWNLOAD
+            ):
+                print(f"Downloaded {paper.title}")
+        else:
+            print(f"Paper `{paper.title}` is already downloaded")
+
+        if not ResearchPaper.get_document_with_id(paper.id):
+            ResearchPaper.index_paper(paper, paper_pdf_path)
+            print(f"Saved `{paper.title}` to es database")
+        else:
+            print(f"`{paper.title}` already in db")
+
     # summary = generate_insights(research_topic)
     # print(summary)
 

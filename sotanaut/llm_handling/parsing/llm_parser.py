@@ -39,13 +39,12 @@ class LLMParser:
             raise ValueError("No valid entries found in the output.")
 
     @staticmethod
-    def parse_enumerated_output(output: str, max_entries: int = 10) -> list[str]:
+    def parse_enumerated_output(output: str) -> list[str]:
         """Parses the LLM output assumed to be in an enumerated format. Extracts entries from a
         list presented with numbers.
 
         Args:
             output (str): The string output from the LLM.
-            max_entries (int): Maximum number of entries to return.
 
         Returns:
             List[str]: A list of parsed entries.
@@ -57,23 +56,20 @@ class LLMParser:
             return []
 
         # Regular expression to identify enumerated list items
-        pattern = r"\d+[.)] +([^,]+)"
-        matches = re.finditer(pattern, output)
+        pattern = r"\d+[.)] +(.+?)(?=\s*\d+[.)]|\s*$)"
+        matches = re.findall(pattern, output, re.DOTALL)
 
-        entries = [match.group(1).strip() for match in matches]
-
-        if not entries:
+        if not matches:
             raise ValueError("No valid enumerated entries found in the output.")
-
-        entries = entries[:max_entries]
-        return LLMParser.clean_list(entries)
+        cleaned_list = LLMParser.clean_list(matches)
+        return cleaned_list
 
     @staticmethod
     def clean_list(output: list[str]) -> list[str]:
         """Cleans and splits an enumerated output list.
 
         Args:
-            output (List[str]): The output list containing a single string of enumerated items.
+            output (List[str]): The output list containing enumerated items.
 
         Returns:
             List[str]: A list of cleaned and individual enumerated items.
@@ -81,13 +77,7 @@ class LLMParser:
         Raises:
             ValueError: If the output list is empty or not in the expected format.
         """
-        if not output or not isinstance(output, list) or len(output) != 1:
-            raise ValueError("Output is not in the expected list format.")
+        if not output or not isinstance(output, list):
+            raise ValueError("Output is not a valid list.")
 
-        # Extracting the single string from the list
-        enumerated_string = output[0]
-
-        # Splitting based on the newline character and removing any leading/trailing whitespace
-        split_items = [item.strip() for item in enumerated_string.split("\n") if item.strip()]
-
-        return [re.sub(r"^\d+\.\s*", "", item) for item in split_items]
+        return [re.sub(r"^\d+[.)]\s*", "", item).strip() for item in output]

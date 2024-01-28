@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 
 
 class EmbeddingsType(Enum):

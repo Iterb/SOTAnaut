@@ -35,10 +35,10 @@ class LLMPaperRetriver:
         for source in self.sources:
             papers.extend(source.get_papers(keywords, max_results=5))
 
-        paper_descriptions = [
-            f"{(paper_num+1)}. {paper.short_description()}"
-            for paper_num, paper in enumerate(papers)
-        ]
+        # paper_descriptions = [
+        #     f"{(paper_num+1)}. {paper.short_description()}"
+        #     for paper_num, paper in enumerate(papers)
+        # ]
         paper_titles = [
             f"{(paper_num+1)}. {paper.title}" for paper_num, paper in enumerate(papers)
         ]

@@ -16,7 +16,6 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain_community.vectorstores import FAISS
 from langchain_core.messages import SystemMessage
 
-from sotanaut.db_handling.es_connection import create_connection, get_connection
 from sotanaut.llm_handling.parsing.prompt_builder import PromptBuilder, PromptType
 
 
